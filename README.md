@@ -39,16 +39,9 @@ This is a complete sentence!
 The time complexity of all operations is O(log N)
 ### Time Complexity
 
-- Write -  O(log N)
-- Read - O(log N)
+- Push -  O(log N)
+- Pop - O(log N)
+- Peek - O(1)
 
 ### Space Complexity
 - O(N)
-
-## Optimization
-The time complexity of the reading is always O(K) since we are required to go through all the lists 
-in order from the first priority to the last, however I found a simple solution to optimize it by 
-adding the firstAvailable parameter which saves the first available list.
-
-This solution reduces read time to O(1) in best case scenario, and statistically it should lower the 
-overall read time on average.
