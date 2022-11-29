@@ -36,7 +36,7 @@ This is a complete sentence!
 ```
 
 ## Complexity
-The time complexity of all operations is O(log N)
+
 ### Time Complexity
 
 - Push -  O(log N)
