@@ -115,7 +115,7 @@ func BenchmarkPriorityQueue_Pop(b *testing.B) {
 		pq.Pop()
 	}
 }
-func initpq(b *testing.B) PriorityQueue[int] {
+func initpq(b *testing.B) *PriorityQueue[int] {
 	pq := NewMinPQ[int]()
 	for i := 0; i < b.N; i++ {
 		pq.Push(rand.Int(), 5)
