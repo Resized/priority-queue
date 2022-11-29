@@ -1,9 +1,9 @@
 # Priority Queue 
 A simple to use priority queue using a binary heap implemented in GO.
 
-- Using generics which means it supports any declared data type with safety
+- Using generics which means it supports any declared data type with safety.
 - Safe for concurrency.
-- Inserting multiple items with the same priority will  
+- Retrieving items with the same priority will retrieve them in FIFO order.
 ## Example
 
 ### Import
