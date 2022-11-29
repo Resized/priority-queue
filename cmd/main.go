@@ -22,12 +22,12 @@ func main() {
 	println()
 
 	m := map[int]string{1: "This ", 7: "sentence", 4: "complete ", 2: "is ", 3: "a ", 9: "!"}
-	pq = priority_queue.NewMinPQFromMap(m)
-	print(pq.Pop())
-	print(pq.Pop())
-	print(pq.Pop())
-	print(pq.Pop())
-	print(pq.Pop())
-	print(pq.Pop())
+	pq2 := priority_queue.NewMinPQFromMap(m)
+	print(pq2.Pop())
+	print(pq2.Pop())
+	print(pq2.Pop())
+	print(pq2.Pop())
+	print(pq2.Pop())
+	print(pq2.Pop())
 
 }
