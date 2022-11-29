@@ -39,11 +39,11 @@ This is a complete sentence!
 The time complexity of all operations is O(log N)
 ### Time Complexity
 
-- Write -  O(1)
-- Read - O(K)
+- Write -  O(log N)
+- Read - O(log N)
 
 ### Space Complexity
-- O(N+K)
+- O(N)
 
 ## Optimization
 The time complexity of the reading is always O(K) since we are required to go through all the lists 
