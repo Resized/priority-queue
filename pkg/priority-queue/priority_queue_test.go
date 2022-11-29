@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestPriorityQueueMin_Push(t *testing.T) {
+func TestMinPriorityQueue_Push(t *testing.T) {
 	pq := NewMinPQ[string]()
 	table := []struct {
 		key   int
@@ -31,7 +31,7 @@ func TestPriorityQueueMin_Push(t *testing.T) {
 	assert.Equal(t, "This is a complete sentence!", result)
 }
 
-func TestPriorityQueueMax_Push(t *testing.T) {
+func TestMaxPriorityQueue_Push(t *testing.T) {
 	pq := NewMaxPQ[string]()
 	table := []struct {
 		key   int
@@ -51,6 +51,48 @@ func TestPriorityQueueMax_Push(t *testing.T) {
 
 	var result string
 	for range table {
+		result += pq.Pop()
+	}
+	assert.Equal(t, "This is a complete sentence!", result)
+}
+
+func TestMaxPriorityQueue_IsEmpty(t *testing.T) {
+	pq := NewMaxPQ[string]()
+	assert.True(t, pq.IsEmpty())
+	pq.Push(1, "Hello")
+	assert.False(t, pq.IsEmpty())
+	pq.Pop()
+	assert.True(t, pq.IsEmpty())
+}
+
+func TestMinPriorityQueue_IsEmpty(t *testing.T) {
+	pq := NewMinPQ[string]()
+	assert.True(t, pq.IsEmpty())
+	pq.Push(1, "Hello")
+	assert.False(t, pq.IsEmpty())
+	pq.Pop()
+	assert.True(t, pq.IsEmpty())
+}
+
+func TestNewMinPQFromMap(t *testing.T) {
+	m := map[int]string{1: "This ", 7: "sentence", 4: "complete ", 2: "is ", 3: "a ", 9: "!"}
+	pq := NewMinPQFromMap(m)
+	assert.Equal(t, 6, pq.Len())
+
+	var result string
+	for range m {
+		result += pq.Pop()
+	}
+	assert.Equal(t, "This is a complete sentence!", result)
+}
+
+func TestNewMaxPQFromMap(t *testing.T) {
+	m := map[int]string{9: "This ", 2: "sentence", 4: "complete ", 7: "is ", 5: "a ", 1: "!"}
+	pq := NewMaxPQFromMap(m)
+	assert.Equal(t, 6, pq.Len())
+
+	var result string
+	for range m {
 		result += pq.Pop()
 	}
 	assert.Equal(t, "This is a complete sentence!", result)

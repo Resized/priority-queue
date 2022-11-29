@@ -30,15 +30,19 @@ func NewMaxPQ[T any]() PriorityQueue[T] {
 	return &priorityQueue[T]{isMinPQ: false}
 }
 
-func NewMinPQFromArr[T any](a []entry[T]) PriorityQueue[T] {
-	pq := &priorityQueue[T]{heap: a, isMinPQ: true}
-	pq.init()
+func NewMinPQFromMap[T any](m map[int]T) PriorityQueue[T] {
+	pq := &priorityQueue[T]{isMinPQ: true}
+	for key, val := range m {
+		pq.Push(key, val)
+	}
 	return pq
 }
 
-func NewMaxPQFromArr[T any](a []entry[T]) PriorityQueue[T] {
-	pq := &priorityQueue[T]{heap: a, isMinPQ: false}
-	pq.init()
+func NewMaxPQFromMap[T any](m map[int]T) PriorityQueue[T] {
+	pq := &priorityQueue[T]{isMinPQ: false}
+	for key, val := range m {
+		pq.Push(key, val)
+	}
 	return pq
 }
 
@@ -99,9 +103,11 @@ func (pq *priorityQueue[T]) down(startIndex int, n int) bool {
 			break
 		}
 		child := leftChild // left child
-		r, l := pq.heap[rightChild].key, pq.heap[leftChild].key
-		if rightChild < n && ((pq.isMinPQ && r < l) || (!pq.isMinPQ && r > l)) {
-			child = rightChild
+		if rightChild < n {
+			r, l := pq.heap[rightChild].key, pq.heap[leftChild].key
+			if (pq.isMinPQ && r < l) || (!pq.isMinPQ && r > l) {
+				child = rightChild
+			}
 		}
 		cur, next := pq.heap[current].key, pq.heap[child].key
 		if (pq.isMinPQ && cur <= next) || (!pq.isMinPQ && cur >= next) {
