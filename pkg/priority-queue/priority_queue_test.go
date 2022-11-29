@@ -9,7 +9,7 @@ import (
 func TestMinPriorityQueue_Push(t *testing.T) {
 	pq := NewMinPQ[string]()
 	table := []struct {
-		key   uint
+		key   uint64
 		value string
 	}{
 		{1, "This "},
@@ -33,7 +33,7 @@ func TestMinPriorityQueue_Push(t *testing.T) {
 
 func TestMinPriorityQueueTableDriven(t *testing.T) {
 	type e struct {
-		key uint
+		key uint64
 		val string
 	}
 	type res struct {
@@ -72,7 +72,7 @@ func TestMinPriorityQueueTableDriven(t *testing.T) {
 func TestMinPriorityQueue_PushSamePriority(t *testing.T) {
 	pq := NewMinPQ[string]()
 	table := []struct {
-		key   uint
+		key   uint64
 		value string
 	}{
 		{1, "This "},
@@ -98,7 +98,7 @@ func TestMaxPriorityQueue_Push(t *testing.T) {
 
 	pq := NewMaxPQ[string]()
 	table := []struct {
-		key   uint
+		key   uint64
 		value string
 	}{
 		{9, "This "},
@@ -139,7 +139,7 @@ func TestMinPriorityQueue_IsEmpty(t *testing.T) {
 }
 
 func TestNewMinPQFromMap(t *testing.T) {
-	m := map[uint]string{1: "This ", 7: "sentence", 4: "complete ", 2: "is ", 3: "a ", 9: "!"}
+	m := map[uint64]string{1: "This ", 7: "sentence", 4: "complete ", 2: "is ", 3: "a ", 9: "!"}
 	pq := NewMinPQFromMap(m)
 	assert.Equal(t, 6, pq.Len())
 
@@ -151,7 +151,7 @@ func TestNewMinPQFromMap(t *testing.T) {
 }
 
 func TestNewMaxPQFromMap(t *testing.T) {
-	m := map[uint]string{9: "This ", 2: "sentence", 4: "complete ", 7: "is ", 5: "a ", 1: "!"}
+	m := map[uint64]string{9: "This ", 2: "sentence", 4: "complete ", 7: "is ", 5: "a ", 1: "!"}
 	pq := NewMaxPQFromMap(m)
 	assert.Equal(t, 6, pq.Len())
 
@@ -165,14 +165,14 @@ func TestNewMaxPQFromMap(t *testing.T) {
 func BenchmarkPriorityQueue_Push(b *testing.B) {
 	q := NewMinPQ[int]()
 	for i := 0; i < b.N; i++ {
-		q.Push(uint(rand.Int()), rand.Int())
+		q.Push(uint64(rand.Int()), rand.Int())
 	}
 }
 
 func BenchmarkPriorityQueue_Pop(b *testing.B) {
 	q := NewMinPQ[int]()
 	for i := 0; i < b.N; i++ {
-		q.Push(uint(rand.Int()), rand.Int())
+		q.Push(uint64(rand.Int()), rand.Int())
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

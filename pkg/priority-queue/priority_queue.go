@@ -1,35 +1,38 @@
 package priority_queue
 
 type entry[T any] struct {
-	key uint
+	key uint64
 	val T
 	id  uint64
 }
 
 type PriorityQueue[T any] struct {
-	isMinPQ   bool
+	comp      func(a, b uint64) bool
 	heap      []entry[T]
 	idCounter uint64
 }
 
+func less(a, b uint64) bool    { return a < b }
+func greater(a, b uint64) bool { return a > b }
+
 func NewMinPQ[T any]() *PriorityQueue[T] {
-	return &PriorityQueue[T]{isMinPQ: true}
+	return &PriorityQueue[T]{comp: less}
 }
 
 func NewMaxPQ[T any]() *PriorityQueue[T] {
-	return &PriorityQueue[T]{isMinPQ: false}
+	return &PriorityQueue[T]{comp: greater}
 }
 
-func NewMinPQFromMap[T any](m map[uint]T) *PriorityQueue[T] {
-	pq := &PriorityQueue[T]{isMinPQ: true}
+func NewMinPQFromMap[T any](m map[uint64]T) *PriorityQueue[T] {
+	pq := &PriorityQueue[T]{comp: less}
 	for key, val := range m {
 		pq.Push(key, val)
 	}
 	return pq
 }
 
-func NewMaxPQFromMap[T any](m map[uint]T) *PriorityQueue[T] {
-	pq := &PriorityQueue[T]{isMinPQ: false}
+func NewMaxPQFromMap[T any](m map[uint64]T) *PriorityQueue[T] {
+	pq := &PriorityQueue[T]{comp: greater}
 	for key, val := range m {
 		pq.Push(key, val)
 	}
@@ -48,7 +51,7 @@ func (pq *PriorityQueue[T]) IsEmpty() bool {
 	return len(pq.heap) == 0
 }
 
-func (pq *PriorityQueue[T]) Push(key uint, value T) {
+func (pq *PriorityQueue[T]) Push(key uint64, value T) {
 	e := entry[T]{key: key, val: value, id: pq.idCounter}
 	pq.idCounter++
 	pq.heap = append(pq.heap, e)
@@ -77,10 +80,10 @@ func (pq *PriorityQueue[T]) up(current int) {
 	for {
 		parent := (current - 1) / 2 // parent
 		cur, next := pq.heap[current], pq.heap[parent]
-		if current == parent || ((pq.isMinPQ && cur.key > next.key) || (!pq.isMinPQ && cur.key < next.key)) {
+		if current == parent || !pq.comp(cur.key, next.key) {
 			break
 		}
-		if cur.key == next.key && ((pq.isMinPQ && cur.id > next.id) || (!pq.isMinPQ && cur.id < next.id)) {
+		if cur.key == next.key && !pq.comp(cur.id, next.id) {
 			break
 		}
 		pq.heap[parent], pq.heap[current] = pq.heap[current], pq.heap[parent]
@@ -99,18 +102,18 @@ func (pq *PriorityQueue[T]) down(startIndex int, n int) bool {
 		child := leftChild // left child
 		if rightChild < n {
 			r, l := pq.heap[rightChild], pq.heap[leftChild]
-			if (pq.isMinPQ && r.key < l.key) || (!pq.isMinPQ && r.key > l.key) {
+			if pq.comp(r.key, l.key) {
 				child = rightChild
 			}
-			if r.key == l.key && ((pq.isMinPQ && r.id < l.id) || (!pq.isMinPQ && r.id > l.id)) {
+			if r.key == l.key && pq.comp(r.id, l.id) {
 				child = rightChild
 			}
 		}
 		cur, next := pq.heap[current], pq.heap[child]
-		if (pq.isMinPQ && cur.key < next.key) || (!pq.isMinPQ && cur.key > next.key) {
+		if pq.comp(cur.key, next.key) {
 			break
 		}
-		if cur.key == next.key && ((pq.isMinPQ && cur.id < next.id) || (!pq.isMinPQ && cur.id > next.id)) {
+		if cur.key == next.key && pq.comp(cur.id, next.id) {
 			break
 		}
 		pq.heap[current], pq.heap[child] = pq.heap[child], pq.heap[current]

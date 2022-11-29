@@ -31,7 +31,7 @@ func main() {
 		println(pq2.Pop())
 	}
 
-	m := map[uint]string{1: "This ", 7: "sentence", 5: "complete ", 2: "is ", 3: "also ", 9: "!", 4: "a "}
+	m := map[uint64]string{1: "This ", 7: "sentence", 5: "complete ", 2: "is ", 3: "also ", 9: "!", 4: "a "}
 	pq3 := priority_queue.NewMinPQFromMap(m)
 	var result2 string
 	for !pq3.IsEmpty() {
