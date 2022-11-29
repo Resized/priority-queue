@@ -19,11 +19,23 @@ func main() {
 	}
 	println(result)
 
-	m := map[int]string{1: "This ", 7: "sentence", 5: "complete ", 2: "is ", 3: "also ", 9: "!", 4: "a "}
-	pq2 := priority_queue.NewMinPQFromMap(m)
-	var result2 string
+	pq2 := priority_queue.NewMinPQ[int]()
+	pq2.Push(1, 1)
+	pq2.Push(1, 2)
+	pq2.Push(1, 3)
+	pq2.Push(1, 4)
+	pq2.Push(1, 5)
+	pq2.Push(1, 6)
+
 	for !pq2.IsEmpty() {
-		result2 += pq2.Pop()
+		println(pq2.Pop())
+	}
+
+	m := map[uint]string{1: "This ", 7: "sentence", 5: "complete ", 2: "is ", 3: "also ", 9: "!", 4: "a "}
+	pq3 := priority_queue.NewMinPQFromMap(m)
+	var result2 string
+	for !pq3.IsEmpty() {
+		result2 += pq3.Pop()
 	}
 	println(result2)
 }

@@ -1,13 +1,15 @@
 package priority_queue
 
 type entry[T any] struct {
-	key int
+	key uint
 	val T
+	id  uint64
 }
 
 type PriorityQueue[T any] struct {
-	isMinPQ bool
-	heap    []entry[T]
+	isMinPQ   bool
+	heap      []entry[T]
+	idCounter uint64
 }
 
 func NewMinPQ[T any]() *PriorityQueue[T] {
@@ -18,7 +20,7 @@ func NewMaxPQ[T any]() *PriorityQueue[T] {
 	return &PriorityQueue[T]{isMinPQ: false}
 }
 
-func NewMinPQFromMap[T any](m map[int]T) *PriorityQueue[T] {
+func NewMinPQFromMap[T any](m map[uint]T) *PriorityQueue[T] {
 	pq := &PriorityQueue[T]{isMinPQ: true}
 	for key, val := range m {
 		pq.Push(key, val)
@@ -26,7 +28,7 @@ func NewMinPQFromMap[T any](m map[int]T) *PriorityQueue[T] {
 	return pq
 }
 
-func NewMaxPQFromMap[T any](m map[int]T) *PriorityQueue[T] {
+func NewMaxPQFromMap[T any](m map[uint]T) *PriorityQueue[T] {
 	pq := &PriorityQueue[T]{isMinPQ: false}
 	for key, val := range m {
 		pq.Push(key, val)
@@ -46,8 +48,9 @@ func (pq *PriorityQueue[T]) IsEmpty() bool {
 	return len(pq.heap) == 0
 }
 
-func (pq *PriorityQueue[T]) Push(key int, value T) {
-	e := entry[T]{key: key, val: value}
+func (pq *PriorityQueue[T]) Push(key uint, value T) {
+	e := entry[T]{key: key, val: value, id: pq.idCounter}
+	pq.idCounter++
 	pq.heap = append(pq.heap, e)
 	pq.up(len(pq.heap) - 1)
 }
@@ -73,8 +76,11 @@ func (pq *PriorityQueue[T]) Peek() T {
 func (pq *PriorityQueue[T]) up(current int) {
 	for {
 		parent := (current - 1) / 2 // parent
-		cur, next := pq.heap[current].key, pq.heap[parent].key
-		if current == parent || ((pq.isMinPQ && cur >= next) || (!pq.isMinPQ && cur <= next)) {
+		cur, next := pq.heap[current], pq.heap[parent]
+		if current == parent || ((pq.isMinPQ && cur.key > next.key) || (!pq.isMinPQ && cur.key < next.key)) {
+			break
+		}
+		if cur.key == next.key && ((pq.isMinPQ && cur.id > next.id) || (!pq.isMinPQ && cur.id < next.id)) {
 			break
 		}
 		pq.heap[parent], pq.heap[current] = pq.heap[current], pq.heap[parent]
@@ -92,13 +98,19 @@ func (pq *PriorityQueue[T]) down(startIndex int, n int) bool {
 		}
 		child := leftChild // left child
 		if rightChild < n {
-			r, l := pq.heap[rightChild].key, pq.heap[leftChild].key
-			if (pq.isMinPQ && r < l) || (!pq.isMinPQ && r > l) {
+			r, l := pq.heap[rightChild], pq.heap[leftChild]
+			if (pq.isMinPQ && r.key < l.key) || (!pq.isMinPQ && r.key > l.key) {
+				child = rightChild
+			}
+			if r.key == l.key && ((pq.isMinPQ && r.id < l.id) || (!pq.isMinPQ && r.id > l.id)) {
 				child = rightChild
 			}
 		}
-		cur, next := pq.heap[current].key, pq.heap[child].key
-		if (pq.isMinPQ && cur <= next) || (!pq.isMinPQ && cur >= next) {
+		cur, next := pq.heap[current], pq.heap[child]
+		if (pq.isMinPQ && cur.key < next.key) || (!pq.isMinPQ && cur.key > next.key) {
+			break
+		}
+		if cur.key == next.key && ((pq.isMinPQ && cur.id < next.id) || (!pq.isMinPQ && cur.id > next.id)) {
 			break
 		}
 		pq.heap[current], pq.heap[child] = pq.heap[child], pq.heap[current]
