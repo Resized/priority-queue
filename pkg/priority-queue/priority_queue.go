@@ -1,5 +1,7 @@
 package priority_queue
 
+import "sync"
+
 type entry[T any] struct {
 	key uint64
 	val T
@@ -10,6 +12,7 @@ type PriorityQueue[T any] struct {
 	comp      func(a, b uint64) bool
 	heap      []entry[T]
 	idCounter uint64
+	mu        sync.Mutex
 }
 
 func less(a, b uint64) bool    { return a < b }
@@ -41,28 +44,38 @@ func NewMaxPQFromMap[T any](m map[uint64]T) *PriorityQueue[T] {
 
 func (pq *PriorityQueue[T]) init() {
 	// heapify
+	pq.mu.Lock()
 	n := len(pq.heap)
 	for i := n/2 - 1; i >= 0; i-- {
 		pq.down(i, n)
 	}
+	pq.mu.Unlock()
 }
 
 func (pq *PriorityQueue[T]) IsEmpty() bool {
+	pq.mu.Lock()
+	defer pq.mu.Unlock()
 	return len(pq.heap) == 0
 }
 
 func (pq *PriorityQueue[T]) Push(key uint64, value T) {
+	pq.mu.Lock()
 	e := entry[T]{key: key, val: value, id: pq.idCounter}
 	pq.idCounter++
 	pq.heap = append(pq.heap, e)
 	pq.up(len(pq.heap) - 1)
+	pq.mu.Unlock()
 }
 
 func (pq *PriorityQueue[T]) Len() int {
+	pq.mu.Lock()
+	defer pq.mu.Unlock()
 	return len(pq.heap)
 }
 
 func (pq *PriorityQueue[T]) Pop() T {
+	pq.mu.Lock()
+	defer pq.mu.Unlock()
 	n := len(pq.heap) - 1
 	pq.heap[0], pq.heap[n] = pq.heap[n], pq.heap[0]
 	pq.down(0, n)
@@ -73,6 +86,8 @@ func (pq *PriorityQueue[T]) Pop() T {
 }
 
 func (pq *PriorityQueue[T]) Peek() T {
+	pq.mu.Lock()
+	defer pq.mu.Unlock()
 	return pq.heap[0].val
 }
 
