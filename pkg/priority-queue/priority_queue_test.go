@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestMinPriorityQueue_Push(t *testing.T) {
@@ -29,6 +30,50 @@ func TestMinPriorityQueue_Push(t *testing.T) {
 		result += pq.Pop()
 	}
 	assert.Equal(t, "This is a complete sentence!", result)
+}
+
+func TestMinPriorityQueue_PushParallel(t *testing.T) {
+	pq := NewMinPQ[string]()
+	numIterations := 10000
+	done := make(chan struct{})
+	table := []struct {
+		key   uint64
+		value string
+	}{
+		{1, "This "},
+		{7, "sentence"},
+		{4, "complete "},
+		{2, "is "},
+		{3, "a "},
+		{9, "!"},
+	}
+	for i := 0; i < numIterations; i++ {
+		go func() {
+			for _, tt := range table {
+				time.Sleep(time.Duration(rand.Intn(10)) * time.Millisecond)
+				pq.Push(tt.key, tt.value)
+			}
+			done <- struct{}{}
+		}()
+	}
+	for i := 0; i < numIterations; i++ {
+		<-done
+	}
+	assert.Equal(t, 6*numIterations, pq.Len())
+	var expected string
+	var result string
+	for range table {
+		for i := 0; i < numIterations; i++ {
+			result += pq.Pop()
+		}
+	}
+	expectedOrder := []string{"This ", "is ", "a ", "complete ", "sentence", "!"}
+	for _, tt := range expectedOrder {
+		for i := 0; i < numIterations; i++ {
+			expected += tt
+		}
+	}
+	assert.Equal(t, expected, result)
 }
 
 func TestMinPriorityQueueTableDriven(t *testing.T) {
