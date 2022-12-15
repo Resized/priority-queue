@@ -1,8 +1,6 @@
 package main
 
-import (
-	"priority-queue/pkg/priority-queue"
-)
+import "github.com/Resized/priority-queue/pkg/priority-queue"
 
 func main() {
 	pq := priority_queue.NewMinPQ[string]()

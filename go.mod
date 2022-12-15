@@ -1,4 +1,4 @@
-module priority-queue
+module github.com/Resized/priority-queue
 
 go 1.19
 
